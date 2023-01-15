@@ -20,16 +20,22 @@ interface ICartGood {
   id: number;
   title: string;
   image: string | StaticImageData;
+  imagePadding?: number;
   configuration: IConfiguration;
   quantity: number;
+}
+
+interface IPromoCode {
+  code: string;
+  description: string;
+  discount: number;
 }
 
 export interface ICartProps {
   cartGoods: ICartGood[];
   total: number;
   totalWithDiscount: number;
-  promoCode?: string;
-  promoCodeDescription?: string;
+  promoCode?: IPromoCode;
   promoCodeError?: string;
   maxQuantity?: number;
   notLoaded?: boolean;
@@ -41,7 +47,7 @@ export interface ICartProps {
 }
 
 const Cart = (cart: ICartProps) => {
-  const [promoCodeInput, setPromoCodeInput] = useState(cart.promoCode);
+  const [promoCodeInput, setPromoCodeInput] = useState(cart.promoCode?.code);
   return (
     <div
       className={clsx(
@@ -68,6 +74,7 @@ const Cart = (cart: ICartProps) => {
       </div>
       {!cart.cartGoods || cart.cartGoods.length == 0 ? (
         <div
+          data-testid="cart-empty"
           className={clsx(
             "relative",
             "w-full",
@@ -96,17 +103,30 @@ const Cart = (cart: ICartProps) => {
               "p-[0.8em]",
               "pt-[1em]",
               "mb-[20px]",
-              "gap-[1.5em]"
+              "gap-2"
             )}
           >
             {cart.notLoaded && <h4>Не удалось загрузить корзину</h4>}
             {cart?.cartGoods.map((cartGood, index) => (
               <div
-                className="flex px-[10px] items-center h-auto relative gap-[1em]"
+                data-testid={`cart-good-${index}`}
+                className={clsx(
+                  "flex",
+                  "px-[10px]",
+                  "items-center",
+                  "h-[75px]",
+                  "relative",
+                  "gap-[1em]",
+                  "rounded-2xl",
+                  "transition-shadow",
+                  "duration-300",
+                  "hover:shadow-lg"
+                )}
                 key={index}
               >
                 <Image
                   className="self-center justify-self-center mr-[5px]"
+                  style={{ padding: cartGood.imagePadding }}
                   src={cartGood.image}
                   width={50}
                   height={50}
@@ -130,6 +150,7 @@ const Cart = (cart: ICartProps) => {
                 </div>
                 <div className="flex items-center gap-[0.5em]">
                   <AiOutlineMinus
+                    data-testid={`cart-good-${index}-remove`}
                     onClick={() =>
                       cart.removeFromCart(
                         cartGood.id,
@@ -156,6 +177,7 @@ const Cart = (cart: ICartProps) => {
                     {cartGood.quantity}
                   </span>
                   <AiOutlinePlus
+                    data-testid={`cart-good-${index}-add`}
                     onClick={() =>
                       cart.addToCart(cartGood.id, cartGood.configuration.title)
                     }
@@ -182,11 +204,17 @@ const Cart = (cart: ICartProps) => {
             ))}
           </div>
           <div className="flex flex-col w-full gap-[1em] px-[1em] pb-[1em]">
+            <span className="ml-[18px] mb-[-14px] h-6 tracking-[1px] text-sm text-red-600 lowercase">
+              {cart.promoCodeError}
+            </span>
             {cart.promoCode ? (
-              <div className="mt-[-10px] mb-[5px] flex justify-between gap-[1em] items-center">
+              <div
+                data-testid="active-promo-code"
+                className="h-[48px] flex justify-between gap-[1em] items-center"
+              >
                 <span className="ml-[10px] tracking-[1px]">
-                  <b className="text-[#fd6d22]">{cart.promoCode}</b> -{" "}
-                  {cart.promoCodeDescription} (
+                  <b className="text-[#fd6d22]">{cart.promoCode.code}</b> -{" "}
+                  {cart.promoCode.description} (
                   {(cart.total - cart.totalWithDiscount).toFixed(2)} ₽)
                 </span>
                 <AiOutlineClose
@@ -195,17 +223,21 @@ const Cart = (cart: ICartProps) => {
                 />
               </div>
             ) : (
-              <div className="w-full flex flex-col justify-center relative">
+              <div className="w-full h-[48px] flex flex-col justify-center relative">
                 <input
                   type="text"
                   placeholder="Промокод"
+                  onKeyDown={(e) =>
+                    e.key === "Enter" &&
+                    cart.setPromoCode(promoCodeInput?.toUpperCase())
+                  }
                   onChange={(e) => setPromoCodeInput(e.target.value)}
                   className={clsx(
                     "rounded-xl",
                     "p-[0.8em]",
                     "border-none",
                     "indent-[5px]",
-                    "bg-[rgb(249,249,249)]",
+                    "bg-gray-100",
                     "text-[15px]",
                     "tracking-[1px]",
                     "uppercase",
@@ -216,7 +248,9 @@ const Cart = (cart: ICartProps) => {
                   value={promoCodeInput}
                 />
                 <button
-                  onClick={() => cart.setPromoCode(promoCodeInput)}
+                  onClick={() =>
+                    cart.setPromoCode(promoCodeInput?.toUpperCase())
+                  }
                   className={clsx(
                     "absolute",
                     "right-[5px]",
@@ -237,18 +271,11 @@ const Cart = (cart: ICartProps) => {
                 </button>
               </div>
             )}
-            {cart.promoCodeError && (
-              <span className="ml-[10px] mt-[-10px] tracking-[1px] text-red-500">
-                {cart.promoCodeError}
-              </span>
-            )}
             <span className="ml-[10px] tracking-[1px]">
-              Итого:{" "}
-              <b className="text-[#fd6d22]">
-                {cart.totalWithDiscount.toFixed(2)} ₽
-              </b>
+              Итого: <b className="">{cart.totalWithDiscount.toFixed(2)} ₽</b>
             </span>
             <button
+              onClick={cart.onSubmit}
               className={clsx(
                 "bg-none",
                 "font-bold",
