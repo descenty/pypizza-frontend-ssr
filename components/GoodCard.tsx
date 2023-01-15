@@ -18,6 +18,7 @@ const GoodCard = (good: IGoodCardProps) => {
       style={{ width: good.width }}
       className={clsx(
         "relative",
+        "bg-white",
         "flex",
         "flex-col",
         "self-center",
@@ -44,7 +45,7 @@ const GoodCard = (good: IGoodCardProps) => {
       />
       <div className="flex flex-col gap-[0.3em] px-[1.5em]">
         <h3 className="text-[18px] font-bold">{good.title}</h3>
-        <div className="text-[13px] text-gray-500/80">
+        <div className="text-[13px] text-gray-500">
           {typeof good.description === "string" ? (
             good.description
           ) : (
