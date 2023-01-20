@@ -10,6 +10,7 @@ import { GrFormClose } from "react-icons/gr";
 import Image, { StaticImageData } from "next/image";
 import clsx from "clsx";
 import { useState } from "react";
+import Input from "./Input";
 
 interface IConfiguration {
   title: string;
@@ -70,7 +71,7 @@ const Cart = (cart: ICartProps) => {
       {/* <div>Loader</div> */}
       <div className="flex items-center justify-between w-full py-[9px] px-[20px]">
         <h3 className="text-[1.17em] font-bold">Корзина</h3>
-        <GrFormClose className="w-[28px] h-[28px] rounded-lg transition-transform duration-300 mr-[-4px] cursor-pointer hover:scale-125" />
+        <GrFormClose className="close-button" />
       </div>
       {!cart.cartGoods || cart.cartGoods.length == 0 ? (
         <div
@@ -224,7 +225,7 @@ const Cart = (cart: ICartProps) => {
               </div>
             ) : (
               <div className="w-full h-[48px] flex flex-col justify-center relative">
-                <input
+                <Input
                   type="text"
                   placeholder="Промокод"
                   onKeyDown={(e) =>
