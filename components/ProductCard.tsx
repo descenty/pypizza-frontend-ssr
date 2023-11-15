@@ -2,7 +2,7 @@ import "./styles.css";
 import clsx from "clsx";
 import Image, { StaticImageData } from "next/image";
 
-interface IGoodCardProps {
+interface IProductCardProps {
   image: string | StaticImageData;
   title: string;
   description: string | string[];
@@ -12,10 +12,10 @@ interface IGoodCardProps {
   imagePadding?: number;
 }
 
-const GoodCard = (good: IGoodCardProps) => {
+const ProductCard = (product: IProductCardProps) => {
   return (
     <div
-      style={{ width: good.width }}
+      style={{ width: product.width }}
       className={clsx(
         "relative",
         "bg-white",
@@ -37,20 +37,20 @@ const GoodCard = (good: IGoodCardProps) => {
     >
       <Image
         className={clsx("object-cover", "p-[10px]", "self-center")}
-        style={{ padding: good.imagePadding }}
-        src={good.image}
+        style={{ padding: product.imagePadding }}
+        src={product.image}
         width={230}
         height={230}
         alt="товар"
       />
       <div className="flex flex-col gap-[0.3em] px-[1.5em]">
-        <h3 className="text-[18px] font-bold">{good.title}</h3>
+        <h3 className="text-[18px] font-bold">{product.title}</h3>
         <div className="text-[13px] text-gray-500">
-          {typeof good.description === "string" ? (
-            good.description
+          {typeof product.description === "string" ? (
+            product.description
           ) : (
             <ul className="list-inside list-disc">
-              {good.description.map((value) => (
+              {product.description.map((value) => (
                 <li key={value}>{value}</li>
               ))}
             </ul>
@@ -58,10 +58,10 @@ const GoodCard = (good: IGoodCardProps) => {
         </div>
         <div className="absolute left-[24px] bottom-[8px] mt-[4px] mb-[10px] flex w-[200px] flex-col">
           <span className="w-full text-[13px] font-semibold">
-            {good.configurationTitle}
+            {product.configurationTitle}
           </span>
           <span className="mt-[-2px] text-[18px] font-bold tracking-[-1px]">
-            от {good.price}&nbsp;₽
+            от {product.price}&nbsp;₽
           </span>
         </div>
       </div>
@@ -69,4 +69,4 @@ const GoodCard = (good: IGoodCardProps) => {
   );
 };
 
-export default GoodCard;
+export default ProductCard;

@@ -4,6 +4,8 @@ import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { SubmitHandler } from "react-hook-form/dist/types";
 import { GrFormClose } from "react-icons/gr";
+import CloseButton from "./common/CloseButton";
+import Input from "./Input";
 
 interface ILoginWindowProps {
   toggleLoginWindow: () => void;
@@ -15,10 +17,7 @@ interface IFormInputs {
   code: string;
 }
 
-const LoginWindow = ({
-  toggleLoginWindow,
-  generateAuthCode,
-}: ILoginWindowProps) => {
+const LoginWindow = ({ toggleLoginWindow, generateAuthCode }: ILoginWindowProps) => {
   const [showLoginWindow, setShowLoginWindow] = useState(false);
   const [showSMSForm, setShowSMSForm] = useState(false);
   const [canGenerateCode, setCanGenerateCode] = useState(false);
@@ -28,10 +27,7 @@ const LoginWindow = ({
     handleSubmit,
     formState: { errors, isDirty, isLoading },
   } = useForm<IFormInputs>();
-  const onSubmit: SubmitHandler<IFormInputs> = useCallback(
-    (data) => console.log(data),
-    []
-  );
+  const onSubmit: SubmitHandler<IFormInputs> = useCallback((data) => console.log(data), []);
   return (
     <div
       className={clsx(
@@ -46,20 +42,9 @@ const LoginWindow = ({
         "p-[1em]"
       )}
     >
-      <div
-        className={clsx(
-          "flex",
-          "w-full",
-          "justify-between",
-          "px-[1em]",
-          "gap-[1em]"
-        )}
-      >
-        <h2>Вход</h2>
-        <GrFormClose
-          className="close-button"
-          onClick={() => toggleLoginWindow()}
-        />
+      <div className={clsx("flex", "w-full", "justify-between", "px-[1em]", "gap-[1em]")}>
+        <h1 className="text-2xl">Вход</h1>
+        <CloseButton onClick={toggleLoginWindow} />
       </div>
       <div
         className={clsx(
@@ -69,6 +54,7 @@ const LoginWindow = ({
           "pt-[1.5em]",
           "relative",
           "flex",
+          "flex-col",
           "justify-start",
           "items-start",
           "overflow-x-hidden",
@@ -93,23 +79,21 @@ const LoginWindow = ({
           <label htmlFor="phone">Укажите свой телефон:</label>
           <div>
             <span>+</span>
-            <input
+            <Input
               {...register("phone", { required: true })}
               id="phone"
+              type="number"
               placeholder="7 . . . . . . ."
               maxLength={15}
-              inputMode="numeric"
             />
           </div>
-          {/* {enableRecaptcha && (
+          {/* {enableRecaptchal && (
             <ReCAPTCHA
               sitekey="6LdkqsciAAAAAI1B1ueIKMD7ha_gowtlL8sl-J3m"
               onChange={(value) => setRecaptchaToken(value)}
             />
           )} */}
-          <button onClick={async () => await generateAuthCode()}>
-            Получить код в SMS
-          </button>
+          <button onClick={async () => await generateAuthCode()}>Получить код в SMS</button>
         </form>
         <form>
           <label htmlFor="code">Код отправлен на +{phone}</label>
@@ -122,14 +106,8 @@ const LoginWindow = ({
             inputMode="numeric"
           />
           {errors.phone && <span>{errors.phone?.message}</span>}
-          {canGenerateCode && (
-            <button onClick={async () => await generateAuthCode()}>
-              Получить новый код
-            </button>
-          )}
-          <button onClick={() => setShowSMSForm(false)}>
-            Изменить номер телефона
-          </button>
+          {canGenerateCode && <button onClick={async () => await generateAuthCode()}>Получить новый код</button>}
+          <button onClick={() => setShowSMSForm(false)}>Изменить номер телефона</button>
         </form>
       </div>
     </div>

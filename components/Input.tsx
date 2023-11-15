@@ -3,6 +3,8 @@ import clsx from "clsx";
 interface IInputProps {
   type?: "text" | "number" | "password" | "email";
   placeholder?: string;
+  maxLength?: number;
+  id?: string;
   uppercase?: boolean;
   className?: string;
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
@@ -14,6 +16,8 @@ interface IInputProps {
 const Input = ({
   type,
   placeholder,
+  id,
+  maxLength,
   className,
   uppercase,
   onKeyDown,
@@ -24,7 +28,9 @@ const Input = ({
   return (
     <input
       {...args}
+      id={id}
       type={type}
+      maxLength={maxLength}
       placeholder={placeholder}
       onKeyDown={onKeyDown}
       onChange={onChange}

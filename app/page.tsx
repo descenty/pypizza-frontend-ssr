@@ -1,5 +1,5 @@
 // import { Nunito, Nunito_Sans } from "@next/font/google";
-import GoodCard from "../components/GoodCard";
+import GoodCard from "../components/ProductCard";
 
 // const nunito = Nunito({ subsets: ["cyrillic-ext"] });
 
